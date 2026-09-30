@@ -1,0 +1,72 @@
+{
+  "id": "samautomationFixture01",
+  "name": "Samautomation - validate three events",
+  "active": false,
+  "nodes": [
+    {
+      "id": "manual-1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "fixture-1",
+      "name": "Sample events",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        250,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return [{json:{event_id:'event-001',amount:12}},{json:{event_id:'event-001',amount:12}},{json:{amount:'invalid'}}];"
+      }
+    },
+    {
+      "id": "validate-1",
+      "name": "Validate events",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const seen = new Set();\nreturn $input.all().map(item => {\n const e=item.json;\n if (typeof e.event_id !== 'string' || !e.event_id.trim() || typeof e.amount !== 'number' || !Number.isFinite(e.amount) || e.amount <= 0) return {json:{status:'rejected',reason:'invalid_event'}};\n if (seen.has(e.event_id)) return {json:{event_id:e.event_id,status:'duplicate'}};\n seen.add(e.event_id);\n return {json:{event_id:e.event_id,amount:e.amount,status:'accepted'}};\n});"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sample events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample events": {
+      "main": [
+        [
+          {
+            "node": "Validate events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

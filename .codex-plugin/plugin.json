@@ -1,0 +1,28 @@
+{
+  "name": "samautomation-workflows",
+  "version": "1.0.0",
+  "description": "Build or repair importable n8n workflow JSON, check its structure and test valid, duplicate and invalid events in isolation. Includes a read-only checker and a manual fixture tested on n8n 2.23.4. No account connection, network requests or activation by the bundled checker.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Samautomation Workflows",
+    "shortDescription": "Build and check n8n workflows",
+    "longDescription": "Build or repair importable n8n workflow JSON, check its structure and test valid, duplicate and invalid events in isolation. Includes a read-only checker and a manual fixture tested on n8n 2.23.4. No account connection, network requests or activation by the bundled checker.",
+    "developerName": "Samautomation",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/smrht/samautomation-workflows",
+    "supportURL": "https://github.com/smrht/samautomation-workflows/issues",
+    "privacyPolicyURL": "https://github.com/smrht/samautomation-workflows/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/smrht/samautomation-workflows/blob/main/LICENSE",
+    "defaultPrompt": [
+      "Review my n8n workflow and show a testable correction.",
+      "Build an inactive workflow with valid, duplicate and invalid sample events."
+    ],
+    "brandColor": "#147D61",
+    "logo": "./assets/logo.svg",
+    "composerIcon": "./assets/logo.svg"
+  }
+}
