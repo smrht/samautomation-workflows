@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Read-only structural check. Does not execute nodes or prove runtime safety."""
-import argparse,json,re,sys
+import argparse,json,math,re,sys
 from pathlib import Path
 SECRET_KEYS={'password','access_token','refresh_token','client_secret','apikey','api_key','authorization'}
 def check(workflow):
@@ -19,7 +19,7 @@ def check(workflow):
             else:seen.add(v)
         if not isinstance(n.get('type'),str) or not n['type']:errors.append(f'Node {i} needs a type.')
         v=n.get('typeVersion')
-        if isinstance(v,bool) or not isinstance(v,(int,float)) or v<=0:errors.append(f'Node {i} needs a positive typeVersion.')
+        if isinstance(v,bool) or not isinstance(v,(int,float)) or not math.isfinite(v) or v<=0:errors.append(f'Node {i} needs a finite positive typeVersion.')
         if not isinstance(n.get('parameters'),dict):errors.append(f'Node {i} needs a parameters object.')
         if n.get('credentials'):errors.append(f'Node {i} contains credential bindings; strip them from a public example.')
     edges=workflow.get('connections')
@@ -33,7 +33,8 @@ def check(workflow):
                 if not isinstance(group,list):errors.append('Connection output must be an array.');continue
                 for edge in group:
                     if not isinstance(edge,dict):errors.append('Connection target must be an object.');continue
-                    if edge.get('node') not in names:errors.append('Connection points at an unknown node.')
+                    target=edge.get('node')
+                    if not isinstance(target,str) or target not in names:errors.append('Connection points at an unknown node.')
                     index=edge.get('index')
                     if isinstance(index,bool) or not isinstance(index,int) or index<0:errors.append('Connection target index must be a nonnegative integer.')
                     if not isinstance(edge.get('type'),str) or not edge['type']:errors.append('Connection target needs a type.')

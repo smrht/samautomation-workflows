@@ -9,6 +9,16 @@ class Check(unittest.TestCase):
  def test_duplicate_identity(self):self.w['nodes'][1]['id']=self.w['nodes'][0]['id'];self.assertTrue(m.check(self.w))
  def test_active(self):self.w['active']=True;self.assertTrue(m.check(self.w))
  def test_malformed_edge(self):self.w['connections']['Sample events']['main']=[None];self.assertTrue(m.check(self.w))
+ def test_malformed_target_does_not_crash(self):
+  for target in ([],{},None,True,1):
+   with self.subTest(target=target):
+    self.w['connections']['Sample events']['main'][0][0]['node']=target
+    self.assertIn('Connection points at an unknown node.',m.check(self.w))
+ def test_nonfinite_type_version(self):
+  for value in (float('nan'),float('inf'),-float('inf')):
+   with self.subTest(value=value):
+    self.w['nodes'][0]['typeVersion']=value
+    self.assertTrue(m.check(self.w))
  def test_credentials(self):self.w['nodes'][1]['credentials']={'x':{'id':'private-binding'}};self.assertTrue(m.check(self.w))
  def test_secret_value_not_in_result(self):self.w['nodes'][1]['parameters']['password']='private-fixture-value';e=m.check(self.w);self.assertTrue(e);self.assertNotIn('private-fixture-value',str(e))
  def test_header(self):self.w['nodes'][1]['parameters']['headers']=[{'name':'Authorization','value':'private-fixture-value'}];self.assertTrue(m.check(self.w))
